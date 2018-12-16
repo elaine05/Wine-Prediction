@@ -1,0 +1,45 @@
+Predicting White Wine Quality - Classification
+========================================================
+author: Nathania
+date: 12/14/2018
+autosize: true
+
+Objective
+========================================================
+The app was designed to determine what physicochemical properties affect white wine quality. These properties are:
+```{r echo=FALSE}
+white <- read.csv("winequality-white.csv", sep=";")
+```
+
+```{r}
+str(white)
+```
+
+
+Data Exploration
+========================================================
+Do correlation analysis between variables including it's distribution among the data,outlier. Some of the result as follows:
+- Volatile acid seems to have a negative impact on the quality of the wine. As volatile acid level goes up, the quality of the wine degrades.Citric acid seems to have a positive correlation with Wine Quality. Better wines have higher Citric Acid.
+- Even though weakly correlated, from the decrease in median values of the Chlorides with increase in quality, it seems that lower percent of Chloride seems to produce better wines.
+- Low concentration of Free Sulphur Dioxide produces better wine and too high concentration results in lower quality of wine. Better wines seems to have lower densities and sugar and high alcohol.
+
+Correlation Plot 
+========================================================
+Wine Density usually contain alcohol and sugar, hence we examine the relationship among them
+
+```{r echo=FALSE}
+library(tidyverse);library(GGally);library(ggplot2)
+white <- read.csv("winequality-white.csv", sep=";");white$quality<-as.factor(white$quality);
+```
+
+```{r}
+tmp <- white[,c(4,8,11:12)];tmp %>% ggpairs( aes(colour=quality), lower = list(combo=wrap("facethist", binwidth=5)))
+```
+Choosing Model
+========================================================
+From data exploration above, even though some of the variable have linear relationship, some of them aren't. We conduct multiple experiment, at the end, we end up using GLM and Naive Bayes as the classifier. Hence we convert the regression problem into classification problem. During the training:
+- GLM, we group the quality as follows: 3-6 (Bad), (>7) Good
+- Naive Bayes, we group as follows: 3-4(Bad), 5-6(Average), (7-9)Good
+
+We partition 80% as training, 20% as testing set.
+For Naive Bayes, we got 88%, while for GLM 90%. But there might be some overfitting there which is cause by the lack of expertise in this industry.
